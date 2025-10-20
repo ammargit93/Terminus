@@ -17,7 +17,7 @@ func NewChatbox(width, height, padding int, placeholder string) Chatbox {
 	ta.SetHeight(height)
 	ta.ShowLineNumbers = false
 	ta.Placeholder = placeholder
-	ta.Prompt = "> "
+	ta.Prompt = TerminusStyle.Render("> ")
 
 	return Chatbox{
 		Textarea: ta,
