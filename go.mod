@@ -1,4 +1,4 @@
-module practice
+module github.com/ammargit93/terminus
 
 go 1.24.4
 
