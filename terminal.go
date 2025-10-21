@@ -10,7 +10,6 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 // Model defines the main application state.
@@ -111,54 +110,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // View renders the UI.
 func (m model) View() string {
-	input := m.chatbox.Textarea.View()
-	helpView := m.help.View(m.keys)
-
-	// Build chat history string
-	history := ""
-	for _, msg := range m.messages {
-		history += lipgloss.NewStyle().
-			Bold(true).
-			Foreground(lipgloss.Color("#87CEEB")). // light blue text
-			Render("> "+msg) + "\n"
-	}
-
-	availableHeight := m.chatbox.Height
-	inputHeight := lipgloss.Height(input)
-	historyHeight := lipgloss.Height(history)
-
-	offset := 3
-	padding := availableHeight - inputHeight - historyHeight - offset - 6
-	if padding < 0 {
-		padding = 0
-	}
-
-	// base holds the unchanged main screen (logo + history + space where overlay can go + input/help)
-	base := tui.TerminusStyle.Render(tui.Terminus) +
-		"\n\n" + history +
-		strings.Repeat("\n", padding)
-
-	// when table is NOT shown, just render base + input + help
+	base := m.renderBase()
 	if !m.showTable {
-		return base + input + helpView
+		return base + m.renderInputHelp()
 	}
-
-	// ---- TABLE OVERLAY: render centered and with a fixed max width ----
-	overlayWidth := m.chatbox.Width - 8
-	if overlayWidth < 40 {
-		overlayWidth = m.chatbox.Width
-	}
-
-	tableContent := m.modelPicker.View()
-
-	tableBox := lipgloss.NewStyle().
-		Width(overlayWidth).
-		Padding(0, 1).
-		Align(0.25, lipgloss.Top). // top inside its allocated area
-		Render(tableContent)
-
-	return tui.TerminusStyle.Render(tui.Terminus) + strings.Repeat("\n", 14) + tableBox + "\n" + input + helpView
-
+	return m.renderWithOverlay()
 }
 
 func main() {
