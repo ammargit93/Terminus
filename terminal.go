@@ -154,11 +154,10 @@ func (m model) View() string {
 	tableBox := lipgloss.NewStyle().
 		Width(overlayWidth).
 		Padding(0, 1).
-		Align(lipgloss.Center, lipgloss.Top). // top inside its allocated area
+		Align(0.25, lipgloss.Top). // top inside its allocated area
 		Render(tableContent)
 
-	// final layout — keep chat + logo unchanged, overlay table above input
-	return base + tableBox + "\n" + input + helpView
+	return tui.TerminusStyle.Render(tui.Terminus) + strings.Repeat("\n", 14) + tableBox + "\n" + input + helpView
 
 }
 

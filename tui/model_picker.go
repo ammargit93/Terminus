@@ -75,5 +75,5 @@ func (m ModelPickerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m ModelPickerModel) View() string {
-	return baseStyle.Render(m.table.View()) + "\n"
+	return baseStyle.Render(m.table.View())
 }
