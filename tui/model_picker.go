@@ -22,7 +22,7 @@ func InitialiseModelPicker() ModelPickerModel {
 	}
 
 	rows := []table.Row{
-		{"1", "llama-3.3-70b-versatile-model", "Groq"},
+		{"1", "llama-3.3-70b-versatile", "groq"},
 	}
 
 	t := table.New(
@@ -65,6 +65,7 @@ func (m ModelPickerModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			return m, tea.Quit
 		case "enter":
+			// fmt.Fprintln(os.Stdout, "Selected: "+m.table.SelectedRow()[1])
 			return m, tea.Batch(
 				tea.Printf("Let's go to %s!", m.table.SelectedRow()[1]),
 			)

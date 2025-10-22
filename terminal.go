@@ -21,6 +21,7 @@ type model struct {
 	lastKey     string
 	quitted     bool
 	showTable   bool
+	LLM         llm
 	messages    []string
 }
 
@@ -29,6 +30,7 @@ func newModel() model {
 		chatbox:     tui.NewChatbox(100, 1, 0, "Enter here..."),
 		modelPicker: tui.InitialiseModelPicker(),
 		keys:        tui.Keys,
+		LLM:         InitialiseModel("llama-3.3-70b-versatile", "groq"),
 		help:        help.New(),
 	}
 }
@@ -83,6 +85,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			text := strings.TrimSpace(m.chatbox.Textarea.Value())
 			if text != "" {
+				resp, err := m.LLM.invoke(text)
+				if err != nil {
+					fmt.Fprintln(os.Stderr, "DEBUG:", err)
+				} else {
+					fmt.Fprintln(os.Stdout, resp)
+				}
+			}
+
+			if text != "" {
 				m.messages = append(m.messages, text)
 				m.chatbox.Textarea.SetValue("") // clear after sending
 			}
@@ -118,7 +129,7 @@ func (m model) View() string {
 }
 
 func main() {
-	p := tea.NewProgram(newModel(), tea.WithAltScreen())
+	p := tea.NewProgram(newModel())
 
 	if _, err := p.Run(); err != nil {
 		fmt.Println("Error running program:", err)
