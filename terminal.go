@@ -12,6 +12,11 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type conversation struct {
+	userMessage string
+	aiMessage   string
+}
+
 // Model defines the main application state.
 type model struct {
 	chatbox     tui.Chatbox
@@ -22,7 +27,7 @@ type model struct {
 	quitted     bool
 	showTable   bool
 	LLM         llm
-	messages    []string
+	messages    []conversation
 }
 
 func newModel() model {
@@ -83,18 +88,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "esc":
 			m.showTable = !m.showTable
 		case "enter":
-			text := strings.TrimSpace(m.chatbox.Textarea.Value())
-			if text != "" {
-				resp, err := m.LLM.invoke(text)
+			userMessage := strings.TrimSpace(m.chatbox.Textarea.Value())
+			var convo conversation
+			if userMessage != "" {
+				aiMessage, err := m.LLM.invoke(userMessage)
 				if err != nil {
+					aiMessage = ""
 					fmt.Fprintln(os.Stderr, "DEBUG:", err)
 				} else {
-					fmt.Fprintln(os.Stdout, resp)
+					convo.aiMessage = aiMessage
+					convo.userMessage = userMessage
+					// fmt.Fprintln(os.Stdout, convo)
 				}
 			}
 
-			if text != "" {
-				m.messages = append(m.messages, text)
+			if userMessage != "" {
+				m.messages = append(m.messages, convo)
 				m.chatbox.Textarea.SetValue("") // clear after sending
 			}
 
@@ -129,7 +138,7 @@ func (m model) View() string {
 }
 
 func main() {
-	p := tea.NewProgram(newModel())
+	p := tea.NewProgram(newModel(), tea.WithAltScreen())
 
 	if _, err := p.Run(); err != nil {
 		fmt.Println("Error running program:", err)

@@ -7,6 +7,26 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+func wrapText(text string, maxWidth int) string {
+	var result strings.Builder
+	words := strings.Fields(text)
+	lineLen := 0
+
+	for _, word := range words {
+		if lineLen+len(word)+1 > maxWidth {
+			result.WriteString("\n")
+			lineLen = 0
+		} else if lineLen > 0 {
+			result.WriteString(" ")
+			lineLen++
+		}
+		result.WriteString(word)
+		lineLen += len(word)
+	}
+
+	return result.String()
+}
+
 // renderBase renders logo + chat history + padding
 func (m model) renderBase() string {
 	history := m.renderHistory()
@@ -34,7 +54,13 @@ func (m model) renderHistory() string {
 			lipgloss.NewStyle().
 				Bold(true).
 				Foreground(lipgloss.Color("#87CEEB")).
-				Render("> "+msg) + "\n",
+				Render("> "+wrapText(msg.userMessage, m.chatbox.Width-4)) + "\n",
+		)
+		sb.WriteString(
+			lipgloss.NewStyle().
+				Bold(true).
+				Foreground(lipgloss.Color("#7438d4")).
+				Render("> "+msg.aiMessage) + "\n",
 		)
 	}
 	return sb.String()
