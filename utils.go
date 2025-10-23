@@ -1,90 +1,90 @@
 package main
 
-import (
-	"strings"
+// import (
+// 	"strings"
 
-	"github.com/ammargit93/terminus/tui"
-	"github.com/charmbracelet/lipgloss"
-)
+// 	"github.com/ammargit93/terminus/tui"
+// 	"github.com/charmbracelet/lipgloss"
+// )
 
-func wrapText(text string, maxWidth int) string {
-	var result strings.Builder
-	words := strings.Fields(text)
-	lineLen := 0
+// func wrapText(text string, maxWidth int) string {
+// 	var result strings.Builder
+// 	words := strings.Fields(text)
+// 	lineLen := 0
 
-	for _, word := range words {
-		if lineLen+len(word)+1 > maxWidth {
-			result.WriteString("\n")
-			lineLen = 0
-		} else if lineLen > 0 {
-			result.WriteString(" ")
-			lineLen++
-		}
-		result.WriteString(word)
-		lineLen += len(word)
-	}
+// 	for _, word := range words {
+// 		if lineLen+len(word)+1 > maxWidth {
+// 			result.WriteString("\n")
+// 			lineLen = 0
+// 		} else if lineLen > 0 {
+// 			result.WriteString(" ")
+// 			lineLen++
+// 		}
+// 		result.WriteString(word)
+// 		lineLen += len(word)
+// 	}
 
-	return result.String()
-}
+// 	return result.String()
+// }
 
-// renderBase renders logo + chat history + padding
-func (m model) renderBase() string {
-	history := m.renderHistory()
+// // renderBase renders logo + chat history + padding
+// func (m model) renderBase() string {
+// 	history := m.renderHistory()
 
-	availableHeight := m.chatbox.Height
-	inputHeight := lipgloss.Height(m.chatbox.Textarea.View())
-	historyHeight := lipgloss.Height(history)
+// 	availableHeight := m.chatbox.Height
+// 	inputHeight := lipgloss.Height(m.chatbox.Textarea.View())
+// 	historyHeight := lipgloss.Height(history)
 
-	offset := 3
-	padding := availableHeight - inputHeight - historyHeight - offset - 6
-	if padding < 0 {
-		padding = 0
-	}
+// 	offset := 3
+// 	padding := availableHeight - inputHeight - historyHeight - offset - 6
+// 	if padding < 0 {
+// 		padding = 0
+// 	}
 
-	return tui.TerminusStyle.Render(tui.Terminus) +
-		"\n\n" + history +
-		strings.Repeat("\n", padding)
-}
+// 	return tui.TerminusStyle.Render(tui.Terminus) +
+// 		"\n\n" + history +
+// 		strings.Repeat("\n", padding)
+// }
 
-// renderHistory renders chat messages
-func (m model) renderHistory() string {
-	var sb strings.Builder
-	for _, msg := range m.messages {
-		sb.WriteString(
-			lipgloss.NewStyle().
-				Bold(true).
-				Foreground(lipgloss.Color("#87CEEB")).
-				Render("> "+wrapText(msg.userMessage, m.chatbox.Width-4)) + "\n",
-		)
-		sb.WriteString(
-			lipgloss.NewStyle().
-				Bold(true).
-				Foreground(lipgloss.Color("#7438d4")).
-				Render("> "+msg.aiMessage) + "\n",
-		)
-	}
-	return sb.String()
-}
+// // renderHistory renders chat messages
+// func (m model) renderHistory() string {
+// 	var sb strings.Builder
+// 	for _, msg := range m.messages {
+// 		sb.WriteString(
+// 			lipgloss.NewStyle().
+// 				Bold(true).
+// 				Foreground(lipgloss.Color("#87CEEB")).
+// 				Render("> "+wrapText(msg.userMessage, m.chatbox.Width-4)) + "\n",
+// 		)
+// 		sb.WriteString(
+// 			lipgloss.NewStyle().
+// 				Bold(true).
+// 				Foreground(lipgloss.Color("#7438d4")).
+// 				Render("> "+msg.aiMessage) + "\n",
+// 		)
+// 	}
+// 	return sb.String()
+// }
 
-// renderInputHelp renders the input box and help
-func (m model) renderInputHelp() string {
-	return m.chatbox.Textarea.View() + m.help.View(m.keys)
-}
+// // renderInputHelp renders the input box and help
+// func (m model) renderInputHelp() string {
+// 	return m.chatbox.Textarea.View() + m.help.View(m.keys)
+// }
 
-// renderWithOverlay handles the model picker overlay
-func (m model) renderWithOverlay() string {
-	overlayWidth := m.chatbox.Width - 8
-	if overlayWidth < 40 {
-		overlayWidth = m.chatbox.Width
-	}
+// // renderWithOverlay handles the model picker overlay
+// func (m model) renderWithOverlay() string {
+// 	overlayWidth := m.chatbox.Width - 8
+// 	if overlayWidth < 40 {
+// 		overlayWidth = m.chatbox.Width
+// 	}
 
-	tableBox := lipgloss.NewStyle().
-		Width(overlayWidth).
-		Padding(0, 1).
-		Align(0.25, lipgloss.Top).
-		Render(m.modelPicker.View())
+// 	tableBox := lipgloss.NewStyle().
+// 		Width(overlayWidth).
+// 		Padding(0, 1).
+// 		Align(0.25, lipgloss.Top).
+// 		Render(m.modelPicker.View())
 
-	return tui.TerminusStyle.Render(tui.Terminus) +
-		strings.Repeat("\n", 14) + tableBox +
-		"\n" + m.renderInputHelp()
-}
+// 	return tui.TerminusStyle.Render(tui.Terminus) +
+// 		strings.Repeat("\n", 14) + tableBox +
+// 		"\n" + m.renderInputHelp()
+// }

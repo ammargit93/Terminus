@@ -65,7 +65,6 @@ func (m llm) invoke(prompt string) (string, error) {
 		return "", fmt.Errorf("json unmarshal error: %w", err)
 	}
 
-	// Extract the first choice's message content
 	choices := v["choices"].([]interface{})
 	message := choices[0].(map[string]interface{})["message"]
 	content := message.(map[string]interface{})["content"].(string)
