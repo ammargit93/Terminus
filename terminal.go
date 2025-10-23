@@ -30,6 +30,7 @@ type model struct {
 	viewport    viewport.Model
 	LLM         llm
 	messages    []conversation
+	copyMode    bool
 	ready       bool // Add this to track if viewport is ready
 }
 
@@ -53,6 +54,7 @@ func newModel() model {
 		LLM:         InitialiseModel("llama-3.3-70b-versatile", "groq"),
 		help:        help.New(),
 		messages:    []conversation{},
+		copyMode:    false,
 		ready:       false,
 	}
 }
@@ -114,6 +116,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "esc":
 			m.showTable = !m.showTable
+
+		case "ctrl+o":
+			m.copyMode = !m.copyMode
 
 		case "enter":
 			userMessage := strings.TrimSpace(m.chatbox.Textarea.Value())
@@ -234,10 +239,19 @@ func (m model) renderWithOverlay() string {
 }
 
 func main() {
-	p := tea.NewProgram(newModel(), tea.WithAltScreen(), tea.WithMouseCellMotion())
+	p := tea.NewProgram(newModel(), tea.WithMouseCellMotion())
 
-	if _, err := p.Run(); err != nil {
+	// Run program and capture the returned model
+	finalModel, err := p.Run()
+	if err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
+
+	m := finalModel.(model)
+
+	for _, msg := range m.messages {
+		fmt.Printf("> %s\n> %s\n\n", msg.userMessage, msg.aiMessage)
+	}
+
 }
