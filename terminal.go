@@ -177,13 +177,13 @@ func (m *model) updateViewportContent() {
 	for _, msg := range m.messages {
 		userMsg := lipgloss.NewStyle().
 			Bold(true).
-			Foreground(lipgloss.Color("#87CEEB")).
+			Foreground(lipgloss.Color("#49d765ff")).
 			Render("> " + msg.userMessage)
 
 		aiMsg := lipgloss.NewStyle().
 			Bold(true).
-			Foreground(lipgloss.Color("#7438d4")).
-			Render("> " + msg.aiMessage)
+			Foreground(lipgloss.Color("#3f3fcbff")).
+			Render("> " + Wrap(msg.aiMessage, m.chatbox.Width))
 
 		sb.WriteString(userMsg + "\n" + aiMsg + "\n\n")
 	}
