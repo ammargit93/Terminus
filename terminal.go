@@ -128,6 +128,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				convo.userMessage = userMessage
 
 				aiMessage, err := m.LLM.invoke(userMessage)
+
 				if err != nil {
 					aiMessage = "[error: see stderr]"
 					fmt.Fprintln(os.Stderr, "DEBUG:", err)
