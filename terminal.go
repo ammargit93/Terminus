@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"os"
 	"strings"
 
 	"github.com/ammargit93/terminus/tui"
@@ -89,6 +87,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if msg.String() == "esc" {
 				m.showTable = false
 				m.fileContext = m.filePicker.FileContext
+				vector.CallCohere(m.fileContext)
 				m.filePicker.FileContext = []string{}
 
 				m.chatbox.Textarea.Focus()
@@ -136,7 +135,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.viewport.GotoBottom()
 				m.chatbox.Textarea.SetValue("")
 			}
-			fmt.Fprintln(os.Stdout, m.fileContext)
 		}
 	}
 

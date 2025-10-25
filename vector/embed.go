@@ -24,7 +24,7 @@ func InitialiseEmbeddingModel() Embedding {
 	}
 }
 
-func readFiles(files string) []string {
+func readFiles(files []string) []string {
 	var contentSlice []string
 	for _, file := range files {
 		contentByte, _ := os.ReadFile(string(file))
@@ -35,7 +35,9 @@ func readFiles(files string) []string {
 	return contentSlice
 }
 
-func CallCohere(files []string) [][]float32 {
+func CallCohere(files []string) {
+	contentSlice := readFiles(files)
+
 	co := client.NewClient(client.WithToken(os.Getenv("COHERE_API_KEY")))
 	model := "embed-english-v3.0"
 	inputType := cohere.EmbedInputTypeSearchDocument // SDK-provided enum/pointer
@@ -43,7 +45,7 @@ func CallCohere(files []string) [][]float32 {
 	resp, err := co.Embed(
 		context.TODO(),
 		&cohere.EmbedRequest{
-			Texts:     files,
+			Texts:     contentSlice,
 			Model:     &model,
 			InputType: &inputType,
 		},
@@ -59,5 +61,11 @@ func CallCohere(files []string) [][]float32 {
 	var v interface{}
 	json.Unmarshal(r, &v)
 	embedding := v.(map[string]interface{})
-	return embedding["embeddings"].([][]float32)
+
+	allEmbeddings := embedding["embeddings"].([][]float32)
+
+	for i, embedding := range allEmbeddings {
+		AddPair(files[i], embedding)
+	}
+
 }
