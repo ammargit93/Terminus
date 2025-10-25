@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/ammargit93/terminus/tui"
+	"github.com/ammargit93/terminus/vector"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/viewport"
@@ -22,10 +23,12 @@ type model struct {
 	chatbox     tui.Chatbox
 	keys        tui.KeyMap
 	help        help.Model
-	modelPicker tui.FilePicker
+	filePicker  tui.FilePicker
 	showTable   bool
 	viewport    viewport.Model
+	fileContext []string
 	LLM         llm
+	embedding   vector.Embedding
 	messages    []conversation
 	copyMode    bool
 	ready       bool
@@ -41,15 +44,16 @@ func newModel() model {
 	}
 
 	return model{
-		chatbox:     tui.NewChatbox(100, 1, 0, "Enter here..."),
-		modelPicker: tui.InitialiseModelPicker(),
-		keys:        tui.Keys,
-		viewport:    vp,
-		LLM:         InitialiseModel("llama-3.3-70b-versatile", "groq"),
-		help:        help.New(),
-		messages:    []conversation{},
-		copyMode:    false,
-		ready:       false,
+		chatbox:    tui.NewChatbox(100, 1, 0, "Enter here..."),
+		filePicker: tui.InitialiseFilePicker(),
+		embedding:  vector.InitialiseEmbeddingModel(),
+		keys:       tui.Keys,
+		viewport:   vp,
+		LLM:        InitialiseModel("llama-3.3-70b-versatile", "groq"),
+		help:       help.New(),
+		messages:   []conversation{},
+		copyMode:   false,
+		ready:      false,
 	}
 }
 
@@ -80,10 +84,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.showTable {
 			// Send keys to table only
 			var tcmd tea.Cmd
-			m.modelPicker, tcmd = m.modelPicker.Update(msg)
+			m.filePicker, tcmd = m.filePicker.Update(msg)
 			cmds = append(cmds, tcmd)
 			if msg.String() == "esc" {
 				m.showTable = false
+				m.fileContext = m.filePicker.FileContext
+				m.filePicker.FileContext = []string{}
+
 				m.chatbox.Textarea.Focus()
 			}
 			return m, tea.Batch(cmds...)
@@ -114,7 +121,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "esc":
 			m.showTable = true
-			m.modelPicker.Table.Focus()
+			m.filePicker.Table.Focus()
 		case "ctrl+o":
 			m.copyMode = !m.copyMode
 		case "enter":
@@ -129,6 +136,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.viewport.GotoBottom()
 				m.chatbox.Textarea.SetValue("")
 			}
+			fmt.Fprintln(os.Stdout, m.fileContext)
 		}
 	}
 
@@ -185,22 +193,22 @@ func (m model) renderWithOverlay() string {
 		Width(width).
 		Padding(0, 1).
 		Align(0.25, lipgloss.Top).
-		Render(m.modelPicker.View())
+		Render(m.filePicker.View())
 	return tui.TerminusStyle.Render(tui.Terminus) +
 		strings.Repeat("\n", 14) + tableBox + "\n" +
 		m.chatbox.Textarea.View() + m.help.View(m.keys)
 }
 
-func main() {
-	p := tea.NewProgram(newModel(), tea.WithMouseCellMotion())
-	finalModel, err := p.Run()
-	if err != nil {
-		fmt.Println("Error:", err)
-		os.Exit(1)
-	}
+// func main() {
+// 	p := tea.NewProgram(newModel(), tea.WithMouseCellMotion())
+// 	finalModel, err := p.Run()
+// 	if err != nil {
+// 		fmt.Println("Error:", err)
+// 		os.Exit(1)
+// 	}
 
-	m := finalModel.(model)
-	for _, msg := range m.messages {
-		fmt.Printf("> %s\n> %s\n\n", msg.userMessage, msg.aiMessage)
-	}
-}
+// 	m := finalModel.(model)
+// 	for _, msg := range m.messages {
+// 		fmt.Printf("> %s\n> %s\n\n", msg.userMessage, msg.aiMessage)
+// 	}
+// }

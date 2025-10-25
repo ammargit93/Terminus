@@ -33,10 +33,11 @@ func getAllFiles() []table.Row {
 }
 
 type FilePicker struct {
-	Table table.Model
+	Table       table.Model
+	FileContext []string
 }
 
-func InitialiseModelPicker() FilePicker {
+func InitialiseFilePicker() FilePicker {
 	columns := []table.Column{
 		{Title: "Files", Width: 65},
 	}
@@ -73,11 +74,11 @@ func (m FilePicker) Update(msg tea.Msg) (FilePicker, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "q", "ctrl+c":
+		case "ctrl+c":
 			return m, tea.Quit
 		case "enter":
-			_ = m.Table.SelectedRow()[0]
-			// fmt.Fprintln(os.Stdout, "Selected: "+selected)
+			SelectedRow = m.Table.SelectedRow()[0]
+			m.FileContext = append(m.FileContext, SelectedRow)
 		}
 	}
 

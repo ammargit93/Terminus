@@ -6,6 +6,13 @@ require (
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/lipgloss v1.1.0
+	github.com/cohere-ai/cohere-go/v2 v2.15.3
+)
+
+require (
+	github.com/aws/aws-sdk-go-v2 v1.30.3 // indirect
+	github.com/aws/smithy-go v1.20.3 // indirect
+	github.com/google/uuid v1.4.0 // indirect
 )
 
 require (
