@@ -31,3 +31,12 @@ func DisplayStore() {
 		fmt.Printf("key: %s\nembedding: %v\n", pair.key, pair.embedding)
 	}
 }
+
+func GetPair(key string) Pair {
+	for _, pair := range Store {
+		if pair.key == key {
+			return pair
+		}
+	}
+	return Pair{}
+}

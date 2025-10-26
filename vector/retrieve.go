@@ -3,7 +3,6 @@ package vector
 // calculates cosine similarity of the user query with all embeddings in the Store
 // and returns the top 5.
 import (
-	"fmt"
 	"sort"
 
 	"gonum.org/v1/gonum/floats"
@@ -33,11 +32,12 @@ func calculateCosineSimilarity(query []float32, embedding []float32) float64 {
 	return dot / (normA * normB)
 }
 
-func GetTopResults(query string) {
-	type scorePair struct {
-		filepath string
-		score    float64
-	}
+type scorePair struct {
+	filepath string
+	score    float64
+}
+
+func GetTopResults(query string) []Pair {
 
 	var scoresList []scorePair
 	embeddedQ := EmbedUserQuery(query)
@@ -50,13 +50,16 @@ func GetTopResults(query string) {
 		})
 	}
 
-	// Sort descending by score
 	sort.Slice(scoresList, func(i, j int) bool {
 		return scoresList[i].score > scoresList[j].score
 	})
 
-	// Print top results
-	for _, s := range scoresList {
-		fmt.Printf("%s : %.6f\n", s.filepath, s.score)
+	//return top keys: embeddings
+	var topPairs []Pair
+	for _, scorePair := range scoresList {
+		pair := GetPair(scorePair.filepath)
+		topPairs = append(topPairs, pair)
 	}
+
+	return topPairs
 }

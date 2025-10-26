@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -78,6 +79,7 @@ func (m FilePicker) Update(msg tea.Msg) (FilePicker, tea.Cmd) {
 			return m, tea.Quit
 		case "enter":
 			selectedRow := m.Table.SelectedRow()[0]
+			fmt.Fprintln(os.Stdout, selectedRow)
 			m.FileContext = append(m.FileContext, selectedRow)
 		}
 	}

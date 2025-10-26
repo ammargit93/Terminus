@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"strings"
 
 	"github.com/ammargit93/terminus/tui"
@@ -197,16 +199,16 @@ func (m model) renderWithOverlay() string {
 		m.chatbox.Textarea.View() + m.help.View(m.keys)
 }
 
-// func main() {
-// 	p := tea.NewProgram(newModel(), tea.WithMouseCellMotion())
-// 	finalModel, err := p.Run()
-// 	if err != nil {
-// 		fmt.Println("Error:", err)
-// 		os.Exit(1)
-// 	}
+func main() {
+	p := tea.NewProgram(newModel(), tea.WithMouseCellMotion())
+	finalModel, err := p.Run()
+	if err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
 
-// 	m := finalModel.(model)
-// 	for _, msg := range m.messages {
-// 		fmt.Printf("> %s\n> %s\n\n", msg.userMessage, msg.aiMessage)
-// 	}
-// }
+	m := finalModel.(model)
+	for _, msg := range m.messages {
+		fmt.Printf("> %s\n> %s\n\n", msg.userMessage, msg.aiMessage)
+	}
+}
