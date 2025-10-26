@@ -16,6 +16,7 @@ type Embedding struct {
 	provider       string
 }
 
+// Initialises the Embedding model, redundant for now
 func InitialiseEmbeddingModel() Embedding {
 	return Embedding{
 		embeddingModel: "embed-english-v3.0",
@@ -24,6 +25,7 @@ func InitialiseEmbeddingModel() Embedding {
 	}
 }
 
+// Reads each file from the  Absolute filepaths slice and returns the slice of the contents of each.
 func readFiles(files []string) []string {
 	var contentSlice []string
 	for _, file := range files {
@@ -35,9 +37,11 @@ func readFiles(files []string) []string {
 	return contentSlice
 }
 
+// takes in a slice of absolute filepaths and reads using readFiles, calls the Cohere API
+// and embeds all the content of the files it also adds the filepaths and embeddings to the Store
 func CallCohere(files []string) {
 	contentSlice := readFiles(files)
-
+	// contentSlice := files
 	co := client.NewClient(client.WithToken(os.Getenv("COHERE_API_KEY")))
 	model := "embed-english-v3.0"
 	inputType := cohere.EmbedInputTypeSearchDocument // SDK-provided enum/pointer
@@ -61,11 +65,59 @@ func CallCohere(files []string) {
 	var v interface{}
 	json.Unmarshal(r, &v)
 	embedding := v.(map[string]interface{})
+	all := embedding["embeddings"]
 
-	allEmbeddings := embedding["embeddings"].([][]float32)
+	outer := all.([]interface{}) // top level = []interface{}
+	var allEmbeddings [][]float32
 
+	for _, row := range outer {
+		inner := row.([]interface{}) // inner level = []interface{}
+		vec := make([]float32, len(inner))
+		for j, val := range inner {
+			vec[j] = float32(val.(float64)) // convert float64 → float32
+		}
+		allEmbeddings = append(allEmbeddings, vec)
+	}
 	for i, embedding := range allEmbeddings {
 		AddPair(files[i], embedding)
 	}
 
+}
+
+func EmbedUserQuery(query string) []float32 {
+	co := client.NewClient(client.WithToken(os.Getenv("COHERE_API_KEY")))
+	model := "embed-english-v3.0"
+	inputType := cohere.EmbedInputTypeSearchDocument // SDK enum
+
+	resp, err := co.Embed(
+		context.TODO(),
+		&cohere.EmbedRequest{
+			Texts:     []string{query},
+			Model:     &model,
+			InputType: &inputType,
+		},
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Marshal + unmarshal to map for flexible parsing
+	r, _ := json.Marshal(resp)
+	var v map[string]interface{}
+	json.Unmarshal(r, &v)
+
+	// Extract the embeddings field
+	rawEmbeddings, ok := v["embeddings"].([]interface{})
+	if !ok || len(rawEmbeddings) == 0 {
+		log.Fatal("no embeddings found in response")
+	}
+
+	// First embedding (since we passed one query)
+	raw := rawEmbeddings[0].([]interface{})
+	queryEmbed := make([]float32, len(raw))
+	for i, val := range raw {
+		queryEmbed[i] = float32(val.(float64))
+	}
+
+	return queryEmbed
 }

@@ -77,8 +77,8 @@ func (m FilePicker) Update(msg tea.Msg) (FilePicker, tea.Cmd) {
 		case "ctrl+c":
 			return m, tea.Quit
 		case "enter":
-			SelectedRow = m.Table.SelectedRow()[0]
-			m.FileContext = append(m.FileContext, SelectedRow)
+			selectedRow := m.Table.SelectedRow()[0]
+			m.FileContext = append(m.FileContext, selectedRow)
 		}
 	}
 

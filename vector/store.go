@@ -17,7 +17,7 @@ func AddPair(filename string, embedding []float32) {
 }
 
 // Iterates through the Store and deletes the key:embedding pair
-// whose key matches filenam
+// whose key matches filename
 func RemovePair(filename string) {
 	for i, pair := range Store {
 		if pair.key == filename {
