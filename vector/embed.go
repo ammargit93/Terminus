@@ -26,7 +26,7 @@ func InitialiseEmbeddingModel() Embedding {
 }
 
 // Reads each file from the  Absolute filepaths slice and returns the slice of the contents of each.
-func readFiles(files []string) []string {
+func ReadFiles(files []string) []string {
 	var contentSlice []string
 	for _, file := range files {
 		contentByte, _ := os.ReadFile(string(file))
@@ -40,7 +40,7 @@ func readFiles(files []string) []string {
 // takes in a slice of absolute filepaths and reads using readFiles, calls the Cohere API
 // and embeds all the content of the files it also adds the filepaths and embeddings to the Store
 func CallCohere(files []string) {
-	contentSlice := readFiles(files)
+	contentSlice := ReadFiles(files)
 	// contentSlice := files
 	co := client.NewClient(client.WithToken(os.Getenv("COHERE_API_KEY")))
 	model := "embed-english-v3.0"

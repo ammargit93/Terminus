@@ -119,6 +119,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.chatbox.Textarea.Focus()
 			}
 		case "ctrl+c":
+			m.fileContext = []string{}
 			return m, tea.Quit
 		case "esc":
 			m.showTable = true
@@ -128,7 +129,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			userMessage := strings.TrimSpace(m.chatbox.Textarea.Value())
 			if userMessage != "" {
-				aiMsg, err := m.LLM.invoke(userMessage)
+				var aiMsg string
+				var err error
+				if len(m.fileContext) > 0 {
+					content := vector.ReadFiles(m.fileContext)
+					aiMsg, err = m.LLM.invoke(userMessage + strings.Join(content, "\n"))
+				} else {
+					aiMsg, err = m.LLM.invoke(userMessage)
+				}
+
 				if err != nil {
 					aiMsg = "[error]"
 				}
@@ -137,6 +146,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.viewport.GotoBottom()
 				m.chatbox.Textarea.SetValue("")
 			}
+
 		}
 	}
 
