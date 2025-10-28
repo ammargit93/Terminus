@@ -56,28 +56,16 @@ func Wrap(content string, width int) string {
 		}
 		wrapped = append(wrapped, currLine)
 	}
-	ret, _ := boldenContent(strings.Join(wrapped, "\n"))
+	ret := boldenContent(strings.Join(wrapped, "\n"))
 	return ret
 }
 
-func boldenContent(content string) (string, string) {
+func boldenContent(content string) string {
 	var result string = ""
-	var codeSnips string
 
 	var i int = 0
-	var j int = 0
+
 	for i < len(content) {
-
-		if i+2 < len(content) && content[i] == '`' && content[i+1] == '`' && content[i+2] == '`' {
-			j = i + 3
-			for j+2 < len(content) && !(content[j] == '`' && content[j+1] == '`' && content[j+2] == '`') {
-				codeSnips += string(content[j])
-				j++
-			}
-			// codeSnips += string(content[j])
-
-		}
-
 		if i+1 < len(content) && content[i] == '*' && content[i+1] == '*' {
 
 			i += 2
@@ -96,5 +84,34 @@ func boldenContent(content string) (string, string) {
 		}
 
 	}
-	return result, codeSnips
+	return result
+}
+
+// resolve markdown ### content
+func resolveHashFont(content string) string {
+	var result string = ""
+
+	var i int = 0
+
+	for i < len(content) {
+		if i+1 < len(content) && content[i] == '#' && content[i+1] == '\n' {
+
+			i += 2
+			result += "\x1b[1m"
+
+			for i+1 < len(content) && !(content[i] == '*' && content[i+1] == '*') {
+				result += string(content[i])
+				i++
+			}
+			result += "\x1b[0m"
+			i += 2
+
+		} else {
+			result += string(content[i])
+			i += 1
+		}
+
+	}
+	return result
+
 }

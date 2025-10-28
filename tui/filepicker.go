@@ -27,7 +27,9 @@ func getAllFiles() []table.Row {
 		if slices.Contains(strings.Split(path, "\\"), ".git") {
 			return nil
 		}
-		files = append(files, table.Row{path})
+		if !d.IsDir() {
+			files = append(files, table.Row{path})
+		}
 		return nil
 	})
 	return files

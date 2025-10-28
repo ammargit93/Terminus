@@ -88,10 +88,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, tcmd)
 			if msg.String() == "esc" {
 				m.showTable = false
-				m.fileContext = m.filePicker.FileContext
-				vector.CallCohere(m.fileContext)
-				m.filePicker.FileContext = []string{}
-
+				if len(m.fileContext) > 0 {
+					m.fileContext = m.filePicker.FileContext
+					vector.CallCohere(m.fileContext)
+					m.filePicker.FileContext = []string{}
+				}
 				m.chatbox.Textarea.Focus()
 			}
 			return m, tea.Batch(cmds...)
@@ -219,6 +220,6 @@ func main() {
 
 	m := finalModel.(model)
 	for _, msg := range m.messages {
-		fmt.Printf("> %s\n> %s\n\n", msg.userMessage, msg.aiMessage)
+		fmt.Printf("> %s\n> %s\n\n", msg.userMessage, Wrap(msg.aiMessage, m.chatbox.Width))
 	}
 }
