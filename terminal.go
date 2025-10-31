@@ -88,10 +88,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, tcmd)
 			if msg.String() == "esc" {
 				m.showTable = false
-				if len(m.fileContext) > 0 {
-					m.fileContext = m.filePicker.FileContext
+				if len(tui.Files) > 0 {
+					m.fileContext = tui.Files
 					vector.CallCohere(m.fileContext)
-					m.filePicker.FileContext = []string{}
 				}
 				m.chatbox.Textarea.Focus()
 			}
@@ -129,6 +128,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.copyMode = !m.copyMode
 		case "enter":
 			userMessage := strings.TrimSpace(m.chatbox.Textarea.Value())
+			if userMessage == "/clear_context" {
+				m.fileContext = []string{}
+				tui.Files = []string{}
+			}
 			if userMessage != "" {
 				var aiMsg string
 				var err error

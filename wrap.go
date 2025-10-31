@@ -86,32 +86,3 @@ func boldenContent(content string) string {
 	}
 	return result
 }
-
-// resolve markdown ### content
-func resolveHashFont(content string) string {
-	var result string = ""
-
-	var i int = 0
-
-	for i < len(content) {
-		if i+1 < len(content) && content[i] == '#' && content[i+1] == '\n' {
-
-			i += 2
-			result += "\x1b[1m"
-
-			for i+1 < len(content) && !(content[i] == '*' && content[i+1] == '*') {
-				result += string(content[i])
-				i++
-			}
-			result += "\x1b[0m"
-			i += 2
-
-		} else {
-			result += string(content[i])
-			i += 1
-		}
-
-	}
-	return result
-
-}

@@ -40,6 +40,8 @@ type FilePicker struct {
 	FileContext []string
 }
 
+var Files []string
+
 func InitialiseFilePicker() FilePicker {
 	columns := []table.Column{
 		{Title: "Files", Width: 65},
@@ -83,6 +85,8 @@ func (m FilePicker) Update(msg tea.Msg) (FilePicker, tea.Cmd) {
 			selectedRow := m.Table.SelectedRow()[0]
 			fmt.Fprintln(os.Stdout, selectedRow)
 			m.FileContext = append(m.FileContext, selectedRow)
+			Files = append(Files, selectedRow)
+			fmt.Fprintln(os.Stdout, m.FileContext)
 		}
 	}
 
