@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ammargit93/terminus/agents"
 	"github.com/ammargit93/terminus/tui"
 	"github.com/ammargit93/terminus/vector"
 	"github.com/charmbracelet/bubbles/help"
@@ -137,14 +138,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				var err error
 				if len(m.fileContext) > 0 {
 					content := vector.ReadFiles(m.fileContext)
-					aiMsg, err = m.LLM.invoke(userMessage + strings.Join(content, "\n"))
+					aiMsg, err = m.LLM.invoke(agents.SystemPrompt + strings.Join(content, "\n") + userMessage)
 				} else {
-					aiMsg, err = m.LLM.invoke(userMessage)
+					aiMsg, err = m.LLM.invoke(agents.SystemPrompt + userMessage)
 				}
 
 				if err != nil {
 					aiMsg = "[error]"
 				}
+				aiMsg = parseJSON(aiMsg)
 				m.messages = append(m.messages, conversation{userMessage, aiMsg})
 				m.updateViewportContent()
 				m.viewport.GotoBottom()

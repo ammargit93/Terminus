@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"strings"
 	"unicode"
 )
@@ -85,4 +86,16 @@ func boldenContent(content string) string {
 
 	}
 	return result
+}
+
+type ResponseMessage struct {
+	Action  string `json:"action"`
+	Message string `json: "message"`
+	Code    string `json:"code"`
+}
+
+func parseJSON(content string) string {
+	var v ResponseMessage
+	json.Unmarshal([]byte(content), &v)
+	return v.Message
 }

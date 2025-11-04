@@ -1,10 +1,23 @@
 package main
 
-// import (
-// 	"github.com/ammargit93/terminus/vector"
-// )
+import (
+	"encoding/json"
+	"fmt"
+)
+
+func ParseJSON(content string) {
+	var v map[string]any
+	json.Unmarshal([]byte(content), &v)
+	fmt.Println(v)
+}
 
 // func main() {
-// 	vector.CallCohere([]string{"Hello world", "goodbye", "nice to meet you!"})
-// 	vector.GetTopResults("welcome")
+// 	content := `
+// 	{
+//         "message": "Writing 'hello world' to a text file",
+//         "action": "write_file",
+//         "code": "with open('hello.txt', 'w') as f: f.write('hello world')"
+// 	}
+// 	`
+// 	ParseJSON(content)
 // }
