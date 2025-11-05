@@ -1,16 +1,5 @@
 package main
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
-func ParseJSON(content string) {
-	var v map[string]any
-	json.Unmarshal([]byte(content), &v)
-	fmt.Println(v)
-}
-
 // func main() {
 // 	content := `
 // 	{

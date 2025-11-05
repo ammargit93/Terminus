@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -146,8 +147,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if err != nil {
 					aiMsg = "[error]"
 				}
-				aiMsg = parseJSON(aiMsg)
-				m.messages = append(m.messages, conversation{userMessage, aiMsg})
+				response := ParseJSON(aiMsg)
+				agents.ExecuteTool(response.Action, response.Args)
+				jsonStr, err := json.Marshal(response)
+				m.messages = append(m.messages, conversation{userMessage, string(jsonStr)})
 				m.updateViewportContent()
 				m.viewport.GotoBottom()
 				m.chatbox.Textarea.SetValue("")

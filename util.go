@@ -89,13 +89,14 @@ func boldenContent(content string) string {
 }
 
 type ResponseMessage struct {
-	Action  string `json:"action"`
-	Message string `json: "message"`
-	Code    string `json:"code"`
+	Action  string   `json:"action"`
+	Message string   `json: "message"`
+	Code    string   `json:"code"`
+	Args    []string `json:"args"`
 }
 
-func parseJSON(content string) string {
+func ParseJSON(content string) ResponseMessage {
 	var v ResponseMessage
 	json.Unmarshal([]byte(content), &v)
-	return v.Message
+	return v
 }
