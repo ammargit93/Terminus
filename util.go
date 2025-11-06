@@ -88,11 +88,15 @@ func boldenContent(content string) string {
 	return result
 }
 
+type Argument struct {
+	ActionName string   `json:"actionName"`
+	ArgNames   []string `json:"argNames"`
+}
 type ResponseMessage struct {
-	Action  string   `json:"action"`
-	Message string   `json: "message"`
-	Code    string   `json:"code"`
-	Args    []string `json:"args"`
+	Action  string     `json:"action"`
+	Message string     `json:"message"`
+	Code    string     `json:"code"`
+	Args    []Argument `json:"args"`
 }
 
 func ParseJSON(content string) ResponseMessage {
