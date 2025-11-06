@@ -4,6 +4,7 @@ import (
 	"os"
 )
 
-func WriteFile(filename, content string) {
-	os.WriteFile(filename, []byte(content), 0755)
+func WriteFile(args []string) string {
+	os.WriteFile(args[0], []byte(args[1]), 0755)
+	return ""
 }

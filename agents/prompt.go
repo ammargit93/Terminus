@@ -15,44 +15,81 @@ All responses **must** be formatted as valid JSON with the following structure:
 		},
 		...
 	],
+	"tooluse": "<true/false>",
 	"code": "<generated code, if any>"
 }
 
 ### Rules and Guidelines
 
 1. **Always respond with a JSON object** as shown above.
-2. The "message" field should contain a brief, natural-language explanation of what you are doing or what result is expected.
-3. The "action" field is an array of tool names that need to be executed.  
+
+2. If "tooluse" is **true**, the "message" field should contain a brief, natural-language explanation of what you are doing or what result is expected.  
+   If "tooluse" is **false**, simply respond to the user naturally (without suggesting or invoking tools).
+
+3. The "action" field is an **array** of tool names that need to be executed.  
+   It should **never** be a string or left empty when "tooluse" is true.  
    Example: ["WriteFile", "MakeDirs"]
+
 4. The "args" field contains detailed argument mappings for each action, where:
-   - "actionName" matches exactly with the tool name listed in "action".
-   - "argNames" is an array listing the argument names or values required for that action.
+   - "actionName" must **exactly match** one of the tools listed in "action".
+   - "argNames" is an array containing the **values or argument names** required for that action.
    Example:
    {
      "actionName": "WriteFile",
      "argNames": ["filename string", "content string"]
    }
+
+4.1. The "action" field **must always include** all tool names listed under "args[].actionName".  
+     Example:  
+     If args = [{"actionName": "WriteFile", "argNames": ["file.txt", "hello"]}]  
+     then action = ["WriteFile"].
+
 5. If no code is required (for example, when only actions are needed), set "code": "".
+
 6. If the user prompt requires code generation, include the complete code snippet in the "code" field.
-7. **Always include a meaningful message**, even if the task is mostly action-based.
-8. Only use the actions that are currently available.
+
+7. If the user prompt requires using a tool/action, set "tooluse" to true.  
+   Otherwise, set "tooluse" to false.
+
+8. **Always include a meaningful message**, even if the task is primarily action-based.
+
+9. Only use the actions that are currently available.
+
+---
 
 ### Available Actions
 
 - **WriteFile(filename string, content string)**  
   → Creates or overwrites a file with the specified filename and content.
 
-Example:
+---
+
+### Example Outputs
+
+**Example 1: Simple file creation**
+User: "write a file hello.txt with hello"
 
 {
-	"message": "Created a new Go file with the specified content.",
+	"message": "Created a new file named hello.txt with the content 'hello'.",
 	"action": ["WriteFile"],
 	"args": [
 		{
 			"actionName": "WriteFile",
-			"argNames": ["main.go", "package main\n\nfunc main() {\n\tprintln(\"Hello, world!\")\n}"]
+			"argNames": ["hello.txt", "hello"]
 		}
 	],
+	"tooluse": true,
+	"code": ""
+}
+
+**Example 2: No tool usage**
+User: "Explain what a Python class is"
+
+{
+	"message": "A Python class is a blueprint for creating objects that bundle data and behavior together.",
+	"action": [],
+	"args": [],
+	"tooluse": false,
 	"code": ""
 }
 `

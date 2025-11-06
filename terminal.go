@@ -147,8 +147,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if err != nil {
 					aiMsg = "[error]"
 				}
-				response := ParseJSON(aiMsg)
-				// agents.ExecuteTool(response.Action, response.Args)
+				response := agents.ParseJSON(aiMsg)
+				if response.ToolUse {
+					agents.ExecuteTool(response.Action, response.Args)
+				}
 				jsonStr, _ := json.Marshal(response)
 				m.messages = append(m.messages, conversation{userMessage, string(jsonStr)})
 				m.updateViewportContent()

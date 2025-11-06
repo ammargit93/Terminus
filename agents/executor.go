@@ -1,9 +1,20 @@
 package agents
 
-type ToolExecutor func(str1, str2 string) string
+type ToolExecutor func(args []string) string
 
-func ExecuteTool(action string, args []string) {
-	if action == "WriteFile" && len(args) == 2 {
-		WriteFile(args[0], args[1])
+var ActionMapper = map[string]ToolExecutor{
+	"WriteFile": WriteFile,
+}
+
+func ExecuteTool(actions []string, args []Argument) {
+	for _, action := range actions {
+		for _, arg := range args {
+			argNames := arg.ArgNames
+			actionName := arg.ActionName
+			if actionName == action {
+				ActionMapper[action](argNames)
+				continue
+			}
+		}
 	}
 }
