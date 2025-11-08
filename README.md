@@ -27,6 +27,11 @@ Terminus is a terminal-based AI chat application built in Go that integrates lar
   - Embeddings and retrieval logic can be extended to handle chunked files
   - Architecture supports adding agentic behavior for autonomous multi-step reasoning
 
+
+## Screenshots
+
+![Startup](assets/image.png)
+
 ### To get started:
 
 For Linux and MacOS
@@ -62,3 +67,4 @@ go run .
 - Press Tab to toggle chatbox focus.
 
 - Press Ctrl+C to quit the application.
+
