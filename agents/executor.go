@@ -8,14 +8,9 @@ var ActionMapper = map[string]ToolExecutor{
 }
 
 func ExecuteTool(actions []string, args []Argument) {
-	for _, action := range actions {
-		for _, arg := range args {
-			argNames := arg.ArgNames
-			actionName := arg.ActionName
-			if actionName == action {
-				ActionMapper[action](argNames)
-				continue
-			}
-		}
+	for _, arg := range args {
+		argNames := arg.ArgNames
+		actionName := arg.ActionName
+		ActionMapper[actionName](argNames)
 	}
 }

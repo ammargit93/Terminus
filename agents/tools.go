@@ -5,11 +5,13 @@ import (
 )
 
 func WriteFile(args []string) string {
-	os.WriteFile(args[0], []byte(args[1]), 0755)
+	finalPath := getCWD(args[0])
+	os.WriteFile(finalPath, []byte(args[1]), 0755)
 	return ""
 }
+
 func MakeDirs(args []string) string {
-	cwd, _ := os.Getwd()
-	os.MkdirAll(cwd+"\\"+args[0], 0755)
+	finalPath := getCWD(args[0])
+	os.MkdirAll(finalPath, 0755)
 	return ""
 }

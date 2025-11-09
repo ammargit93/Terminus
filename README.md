@@ -27,6 +27,9 @@ Terminus is a terminal-based AI chat application built in Go that integrates lar
   - Embeddings and retrieval logic can be extended to handle chunked files
   - Architecture supports adding agentic behavior for autonomous multi-step reasoning
 
+- **Agentic Capabilities**
+  - WriteFile – Creates or updates files directly from chat responses.
+  - MakeDirs – Automatically creates directory structures when needed.
 
 ## Screenshots
 

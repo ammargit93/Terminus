@@ -1,6 +1,10 @@
 package agents
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"os"
+	"strings"
+)
 
 type Argument struct {
 	ActionName string   `json:"actionName"`
@@ -18,4 +22,12 @@ func ParseJSON(content string) ResponseMessage {
 	var v ResponseMessage
 	json.Unmarshal([]byte(content), &v)
 	return v
+}
+
+func getCWD(path string) string {
+	cwd, _ := os.Getwd()
+	finalPath := cwd + "\\" + path
+	finalPath = strings.ReplaceAll(finalPath, "/", "\\")
+	finalPath = strings.ReplaceAll(finalPath, `\\`, `\`)
+	return finalPath
 }

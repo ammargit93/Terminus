@@ -1,12 +1,14 @@
 package main
 
+// func MakeDirs(args []string) string {
+// 	cwd, _ := os.Getwd()
+// 	finalPath := cwd + "\\" + args[0]
+// 	finalPath = strings.ReplaceAll(finalPath, "/", "\\")
+// 	finalPath = strings.ReplaceAll(finalPath, `\\`, `\`)
+// 	os.MkdirAll(finalPath, 0755)
+// 	return ""
+// }
 // func main() {
-// 	content := `
-// 	{
-//         "message": "Writing 'hello world' to a text file",
-//         "action": "write_file",
-//         "code": "with open('hello.txt', 'w') as f: f.write('hello world')"
-// 	}
-// 	`
-// 	ParseJSON(content)
+// 	var args = []string{"/tempfiles/example.py", "print('Hello world')"}
+// 	_ = MakeDirs(args)
 // }
