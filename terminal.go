@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -140,19 +139,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if len(m.fileContext) > 0 {
 					content := vector.ReadFiles(m.fileContext)
 					aiMsg, err = m.LLM.invoke(agents.SystemPrompt + strings.Join(content, "\n") + userMessage)
+					m.messages = append(m.messages, conversation{userMessage, aiMsg})
 				} else {
-					aiMsg, err = m.LLM.invoke(agents.SystemPrompt + userMessage)
+					if agents.IsToolPrompt(userMessage) {
+						aiMsg, err = m.LLM.invoke(agents.SystemPrompt + userMessage)
+						response := agents.ParseJSON(aiMsg)
+						if response.ToolUse {
+							agents.ExecuteTool(response.Action, response.Args)
+						}
+						m.messages = append(m.messages, conversation{userMessage, response.Message})
+					} else {
+						aiMsg, err = m.LLM.invoke(userMessage)
+						m.messages = append(m.messages, conversation{userMessage, aiMsg})
+					}
 				}
 
 				if err != nil {
 					aiMsg = "[error]"
 				}
-				response := agents.ParseJSON(aiMsg)
-				if response.ToolUse {
-					agents.ExecuteTool(response.Action, response.Args)
-				}
-				jsonStr, _ := json.Marshal(response)
-				m.messages = append(m.messages, conversation{userMessage, string(jsonStr)})
 				m.updateViewportContent()
 				m.viewport.GotoBottom()
 				m.chatbox.Textarea.SetValue("")

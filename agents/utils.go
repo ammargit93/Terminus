@@ -31,3 +31,19 @@ func getCWD(path string) string {
 	finalPath = strings.ReplaceAll(finalPath, `\\`, `\`)
 	return finalPath
 }
+
+var toolKeywords = []string{
+	"write", "create", "make", "save", "generate", "export", "delete", "remove", "update",
+	"read", "open", "download", "upload", "print", "send", "execute",
+}
+
+// Simple function to classify
+func IsToolPrompt(prompt string) bool {
+	prompt = strings.ToLower(prompt)
+	for _, kw := range toolKeywords {
+		if strings.Contains(prompt, kw) {
+			return true
+		}
+	}
+	return false
+}
