@@ -62,6 +62,8 @@ All responses **must** be formatted as valid JSON with the following structure:
 - **WriteFile(filename string, content string)**  
   → Creates or overwrites a file with the specified filename and content.
 
+- **MakeDirs(path string)**  
+  → Makes a directory structure based on the path provided.
 ---
 
 ### Example Outputs
