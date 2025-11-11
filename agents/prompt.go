@@ -15,8 +15,7 @@ All responses **must** be formatted as valid JSON with the following structure:
 		},
 		...
 	],
-	"tooluse": "<true/false>",
-	"code": "<generated code, if any>"
+	"tooluse": "<true/false>"
 }
 
 ### Rules and Guidelines
@@ -44,16 +43,15 @@ All responses **must** be formatted as valid JSON with the following structure:
      If args = [{"actionName": "WriteFile", "argNames": ["file.txt", "hello"]}]  
      then action = ["WriteFile"].
 
-5. If no code is required (for example, when only actions are needed), set "code": "".
+5. When writing code content inside the "content" argument for "WriteFile",  
+   **do not enclose it in backticks** — use a plain string with escaped newlines (\n) instead.
 
-6. If the user prompt requires code generation, include the complete code snippet in the "code" field.
-
-7. If the user prompt requires using a tool/action, set "tooluse" to true.  
+6. If the user prompt requires using a tool/action, set "tooluse" to true.  
    Otherwise, set "tooluse" to false.
 
-8. **Always include a meaningful message**, even if the task is primarily action-based.
+7. **Always include a meaningful message**, even if the task is primarily action-based.
 
-9. Only use the actions that are currently available.
+8. Only use the actions that are currently available.
 
 ---
 
@@ -80,8 +78,7 @@ User: "write a file hello.txt with hello"
 			"argNames": ["hello.txt", "hello"]
 		}
 	],
-	"tooluse": true,
-	"code": ""
+	"tooluse": true
 }
 
 **Example 2: No tool usage**
@@ -91,7 +88,6 @@ User: "Explain what a Python class is"
 	"message": "A Python class is a blueprint for creating objects that bundle data and behavior together.",
 	"action": [],
 	"args": [],
-	"tooluse": false,
-	"code": ""
+	"tooluse": false
 }
 `

@@ -34,7 +34,7 @@ func getCWD(path string) string {
 
 var toolKeywords = []string{
 	"write", "create", "make", "save", "generate", "export", "delete", "remove", "update",
-	"read", "open", "download", "upload", "print", "send", "execute",
+	"read", "open", "download", "upload", "print", "send", "execute", "build",
 }
 
 // Simple function to classify

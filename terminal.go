@@ -136,20 +136,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if userMessage != "" {
 				var aiMsg string
 				var err error
-				if len(m.fileContext) > 0 {
-					content := vector.ReadFiles(m.fileContext)
+				if len(tui.Files) > 0 {
+					content := vector.ReadFiles(tui.Files)
 					aiMsg, err = m.LLM.invoke(agents.SystemPrompt + strings.Join(content, "\n") + userMessage)
 					m.messages = append(m.messages, conversation{userMessage, aiMsg})
 				} else {
 					if agents.IsToolPrompt(userMessage) {
 						aiMsg, err = m.LLM.invoke(agents.SystemPrompt + userMessage)
 						response := agents.ParseJSON(aiMsg)
-						if response.ToolUse {
-							agents.ExecuteTool(response.Action, response.Args)
-						}
+						agents.ExecuteTool(response.Action, response.Args)
 						m.messages = append(m.messages, conversation{userMessage, response.Message})
 					} else {
-						aiMsg, err = m.LLM.invoke(userMessage)
+						aiMsg, err = m.LLM.invoke(agents.SystemPrompt + userMessage)
 						m.messages = append(m.messages, conversation{userMessage, aiMsg})
 					}
 				}
